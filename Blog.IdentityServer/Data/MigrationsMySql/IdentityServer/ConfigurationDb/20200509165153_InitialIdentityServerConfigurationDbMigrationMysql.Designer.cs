@@ -3,49 +3,55 @@ using System;
 using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
+namespace Blog.IdentityServer.Data.MigrationsMySql.IdentityServer.ConfigurationDb
 {
     [DbContext(typeof(ConfigurationDbContext))]
-    [Migration("20190506094804_InitialIdentityServerConfigurationDbMigration")]
-    partial class InitialIdentityServerConfigurationDbMigration
+    [Migration("20200509165153_InitialIdentityServerConfigurationDbMigrationMysql")]
+    partial class InitialIdentityServerConfigurationDbMigrationMysql
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ApiResource", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("varchar(1000) CHARACTER SET utf8mb4")
                         .HasMaxLength(1000);
 
                     b.Property<string>("DisplayName")
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<bool>("Enabled");
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("LastAccessed");
+                    b.Property<DateTime?>("LastAccessed")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<bool>("NonEditable");
+                    b.Property<bool>("NonEditable")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("Updated");
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -59,12 +65,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ApiResourceId");
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.HasKey("Id");
@@ -78,16 +86,19 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ApiResourceId");
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Key")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.Property<string>("Value")
                         .IsRequired()
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
                     b.HasKey("Id");
@@ -101,25 +112,32 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ApiResourceId");
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .HasColumnType("varchar(1000) CHARACTER SET utf8mb4")
                         .HasMaxLength(1000);
 
                     b.Property<string>("DisplayName")
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<bool>("Emphasize");
+                    b.Property<bool>("Emphasize")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<bool>("Required");
+                    b.Property<bool>("Required")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("ShowInDiscoveryDocument");
+                    b.Property<bool>("ShowInDiscoveryDocument")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
@@ -135,12 +153,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ApiScopeId");
+                    b.Property<int>("ApiScopeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.HasKey("Id");
@@ -154,23 +174,29 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ApiResourceId");
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("varchar(1000) CHARACTER SET utf8mb4")
                         .HasMaxLength(1000);
 
-                    b.Property<DateTime?>("Expiration");
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.Property<string>("Value")
                         .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasMaxLength(4000);
 
                     b.HasKey("Id");
@@ -184,102 +210,143 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("AbsoluteRefreshTokenLifetime");
+                    b.Property<int>("AbsoluteRefreshTokenLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<int>("AccessTokenLifetime");
+                    b.Property<int>("AccessTokenLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<int>("AccessTokenType");
+                    b.Property<int>("AccessTokenType")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("AllowAccessTokensViaBrowser");
+                    b.Property<bool>("AllowAccessTokensViaBrowser")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("AllowOfflineAccess");
+                    b.Property<bool>("AllowOfflineAccess")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("AllowPlainTextPkce");
+                    b.Property<bool>("AllowPlainTextPkce")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("AllowRememberConsent");
+                    b.Property<bool>("AllowRememberConsent")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("AlwaysIncludeUserClaimsInIdToken");
+                    b.Property<bool>("AlwaysIncludeUserClaimsInIdToken")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("AlwaysSendClientClaims");
+                    b.Property<bool>("AlwaysSendClientClaims")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("AuthorizationCodeLifetime");
+                    b.Property<int>("AuthorizationCodeLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("BackChannelLogoutSessionRequired");
+                    b.Property<bool>("BackChannelLogoutSessionRequired")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("BackChannelLogoutUri")
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
                     b.Property<string>("ClientClaimsPrefix")
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.Property<string>("ClientId")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.Property<string>("ClientName")
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.Property<string>("ClientUri")
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
-                    b.Property<int?>("ConsentLifetime");
+                    b.Property<int?>("ConsentLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("varchar(1000) CHARACTER SET utf8mb4")
                         .HasMaxLength(1000);
 
-                    b.Property<int>("DeviceCodeLifetime");
+                    b.Property<int>("DeviceCodeLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("EnableLocalLogin");
+                    b.Property<bool>("EnableLocalLogin")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Enabled");
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("FrontChannelLogoutSessionRequired");
+                    b.Property<bool>("FrontChannelLogoutSessionRequired")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("FrontChannelLogoutUri")
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
-                    b.Property<int>("IdentityTokenLifetime");
+                    b.Property<int>("IdentityTokenLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IncludeJwtId");
+                    b.Property<bool>("IncludeJwtId")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("LastAccessed");
+                    b.Property<DateTime?>("LastAccessed")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("LogoUri")
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
-                    b.Property<bool>("NonEditable");
+                    b.Property<bool>("NonEditable")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PairWiseSubjectSalt")
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.Property<string>("ProtocolType")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<int>("RefreshTokenExpiration");
+                    b.Property<int>("RefreshTokenExpiration")
+                        .HasColumnType("int");
 
-                    b.Property<int>("RefreshTokenUsage");
+                    b.Property<int>("RefreshTokenUsage")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("RequireClientSecret");
+                    b.Property<bool>("RequireClientSecret")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("RequireConsent");
+                    b.Property<bool>("RequireConsent")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("RequirePkce");
+                    b.Property<bool>("RequirePkce")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("SlidingRefreshTokenLifetime");
+                    b.Property<int>("SlidingRefreshTokenLifetime")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("UpdateAccessTokenClaimsOnRefresh");
+                    b.Property<bool>("UpdateAccessTokenClaimsOnRefresh")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("Updated");
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("UserCodeType")
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
                         .HasMaxLength(100);
 
-                    b.Property<int?>("UserSsoLifetime");
+                    b.Property<int?>("UserSsoLifetime")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -293,16 +360,19 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.Property<string>("Value")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.HasKey("Id");
@@ -316,12 +386,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Origin")
                         .IsRequired()
+                        .HasColumnType("varchar(150) CHARACTER SET utf8mb4")
                         .HasMaxLength(150);
 
                     b.HasKey("Id");
@@ -335,12 +407,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("GrantType")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.HasKey("Id");
@@ -354,12 +428,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Provider")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.HasKey("Id");
@@ -373,12 +449,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("PostLogoutRedirectUri")
                         .IsRequired()
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
                     b.HasKey("Id");
@@ -392,16 +470,19 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Key")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.Property<string>("Value")
                         .IsRequired()
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
                     b.HasKey("Id");
@@ -415,12 +496,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("RedirectUri")
                         .IsRequired()
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
                     b.HasKey("Id");
@@ -434,12 +517,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Scope")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.HasKey("Id");
@@ -453,23 +538,29 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("ClientId");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
-                    b.Property<DateTime?>("Expiration");
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.Property<string>("Value")
                         .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasMaxLength(4000);
 
                     b.HasKey("Id");
@@ -483,12 +574,14 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("IdentityResourceId");
+                    b.Property<int>("IdentityResourceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
                     b.HasKey("Id");
@@ -502,31 +595,41 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Created");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("varchar(1000) CHARACTER SET utf8mb4")
                         .HasMaxLength(1000);
 
                     b.Property<string>("DisplayName")
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<bool>("Emphasize");
+                    b.Property<bool>("Emphasize")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Enabled");
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<bool>("NonEditable");
+                    b.Property<bool>("NonEditable")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Required");
+                    b.Property<bool>("Required")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("ShowInDiscoveryDocument");
+                    b.Property<bool>("ShowInDiscoveryDocument")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("Updated");
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -540,16 +643,19 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
-                    b.Property<int>("IdentityResourceId");
+                    b.Property<int>("IdentityResourceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Key")
                         .IsRequired()
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
                         .HasMaxLength(250);
 
                     b.Property<string>("Value")
                         .IsRequired()
+                        .HasColumnType("varchar(2000) CHARACTER SET utf8mb4")
                         .HasMaxLength(2000);
 
                     b.HasKey("Id");
@@ -564,7 +670,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("UserClaims")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ApiResourceProperty", b =>
@@ -572,7 +679,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Properties")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ApiScope", b =>
@@ -580,7 +688,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Scopes")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ApiScopeClaim", b =>
@@ -588,7 +697,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiScope", "ApiScope")
                         .WithMany("UserClaims")
                         .HasForeignKey("ApiScopeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ApiSecret", b =>
@@ -596,7 +706,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Secrets")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientClaim", b =>
@@ -604,7 +715,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("Claims")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientCorsOrigin", b =>
@@ -612,7 +724,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("AllowedCorsOrigins")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientGrantType", b =>
@@ -620,7 +733,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("AllowedGrantTypes")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientIdPRestriction", b =>
@@ -628,7 +742,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("IdentityProviderRestrictions")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientPostLogoutRedirectUri", b =>
@@ -636,7 +751,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("PostLogoutRedirectUris")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientProperty", b =>
@@ -644,7 +760,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("Properties")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientRedirectUri", b =>
@@ -652,7 +769,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("RedirectUris")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientScope", b =>
@@ -660,7 +778,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("AllowedScopes")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.ClientSecret", b =>
@@ -668,7 +787,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("ClientSecrets")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.IdentityClaim", b =>
@@ -676,7 +796,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.IdentityResource", "IdentityResource")
                         .WithMany("UserClaims")
                         .HasForeignKey("IdentityResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.IdentityResourceProperty", b =>
@@ -684,7 +805,8 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
                     b.HasOne("IdentityServer4.EntityFramework.Entities.IdentityResource", "IdentityResource")
                         .WithMany("Properties")
                         .HasForeignKey("IdentityResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

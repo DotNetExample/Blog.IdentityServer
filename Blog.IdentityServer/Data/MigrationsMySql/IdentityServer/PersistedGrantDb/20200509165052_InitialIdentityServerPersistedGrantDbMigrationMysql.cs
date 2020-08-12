@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Blog.IdentityServer.Data.Migrations.IdentityServer.PersistedGrantDb
+namespace Blog.IdentityServer.Data.MigrationsMySql.IdentityServer.PersistedGrantDb
 {
-    public partial class InitialIdentityServerPersistedGrantDbMigration : Migration
+    public partial class InitialIdentityServerPersistedGrantDbMigrationMysql : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,16 @@ namespace Blog.IdentityServer.Data.Migrations.IdentityServer.PersistedGrantDb
                 table: "DeviceCodes",
                 column: "DeviceCode",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceCodes_Expiration",
+                table: "DeviceCodes",
+                column: "Expiration");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersistedGrants_Expiration",
+                table: "PersistedGrants",
+                column: "Expiration");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_SubjectId_ClientId_Type",

@@ -56,6 +56,7 @@ namespace IdentityServer4.Quickstart.UI
         /// Show login page
         /// </summary>
         [HttpGet]
+        [Route("oauth2/authorize")]
         public async Task<IActionResult> Login(string returnUrl)
         {
             // build a model so we know what to show on the login page
@@ -75,20 +76,29 @@ namespace IdentityServer4.Quickstart.UI
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("oauth2/authorize")]
         public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
+            // check if we are in the context of an authorization request
+            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+
             if (button != "login")
             {
-                // the user clicked the "cancel" button
-                var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
                 if (context != null)
                 {
                     // if the user cancels, send a result back into IdentityServer as if they 
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
-                    await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
+                    await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
 
                     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                    if (context.IsNativeClient())
+                    {
+                        // The client is native, so this change in how to
+                        // return the response is for better UX for the end user.
+                        return this.LoadingPage("Redirect", model.ReturnUrl);
+                    }
+
                     return Redirect(model.ReturnUrl);
                 }
                 else
@@ -197,7 +207,18 @@ namespace IdentityServer4.Quickstart.UI
             additionalLocalClaims.AddRange(principal.Claims);
             var name = principal.FindFirst(JwtClaimTypes.Name)?.Value ?? user.Id.ToString();
             await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.Id.ToString(), name));
-            await HttpContext.SignInAsync(user.Id.ToString(), name, provider, localSignInProps, additionalLocalClaims.ToArray());
+
+            //await HttpContext.SignInAsync(user.Id.ToString(), name, provider, localSignInProps, additionalLocalClaims.ToArray());
+
+            var isuser = new IdentityServerUser(user.Id.ToString())
+            {
+                DisplayName = name,
+                IdentityProvider = provider,
+                AdditionalClaims = additionalLocalClaims
+            };
+
+            await HttpContext.SignInAsync(isuser, localSignInProps);
+
 
             // delete temporary cookie used during external authentication
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -296,9 +317,9 @@ namespace IdentityServer4.Quickstart.UI
                 }).ToList();
 
             var allowLocal = true;
-            if (context?.ClientId != null)
+            if (context?.Client.ClientId != null)
             {
-                var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
+                var client = await _clientStore.FindEnabledClientByIdAsync(context.Client.ClientId);
                 if (client != null)
                 {
                     allowLocal = client.EnableLocalLogin;
@@ -590,11 +611,25 @@ namespace IdentityServer4.Quickstart.UI
 
                     if (result.Succeeded)
                     {
+                        //var claims = new List<Claim>{
+                        //            new Claim(JwtClaimTypes.Name, model.RealName),
+                        //            new Claim(JwtClaimTypes.Email, model.Email),
+                        //            new Claim(JwtClaimTypes.EmailVerified, "false", ClaimValueTypes.Boolean),
+                        //            new Claim("rolename", rName),
+                        //        };
+
+                        //claims.AddRange((new List<int> { 6 }).Select(s => new Claim(JwtClaimTypes.Role, s.ToString())));
+
+
+                        //result = _userManager.AddClaimsAsync(userItem, claims).Result;
+
+
                         result = await _userManager.AddClaimsAsync(user, new Claim[]{
                             new Claim(JwtClaimTypes.Name, model.RealName),
                             new Claim(JwtClaimTypes.Email, model.Email),
                             new Claim(JwtClaimTypes.EmailVerified, "false", ClaimValueTypes.Boolean),
-                            new Claim(JwtClaimTypes.Role, rName)
+                            new Claim(JwtClaimTypes.Role, "6"),
+                            new Claim("rolename", rName),
                         });
 
                         if (result.Succeeded)
@@ -627,7 +662,7 @@ namespace IdentityServer4.Quickstart.UI
         public IActionResult Users(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            var users = _userManager.Users.Where(d => !d.tdIsDelete).OrderBy(d => d.UserName).ToList();
+            var users = _userManager.Users.Where(d => !d.tdIsDelete).OrderByDescending(d => d.Id).ToList();
 
             return View(users);
         }
@@ -652,7 +687,7 @@ namespace IdentityServer4.Quickstart.UI
                 return NotFound();
             }
 
-            return View(new EditViewModel(user.Id.ToString(), user.LoginName, user.UserName, user.Email));
+            return View(new EditViewModel(user.Id.ToString(), user.LoginName, user.UserName, user.Email, await _userManager.GetClaimsAsync(user)));
         }
 
 
@@ -769,24 +804,34 @@ namespace IdentityServer4.Quickstart.UI
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                //if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                if (user == null)
+                var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+                var roleName = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "rolename")?.Value;
+                if (email == model.Email || (roleName == "SuperAdmin"))
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToAction(nameof(ForgotPasswordConfirmation));
+
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    //if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                    if (user == null)
+                    {
+                        // Don't reveal that the user does not exist or is not confirmed
+                        return RedirectToAction(nameof(ForgotPasswordConfirmation));
+                    }
+
+                    // For more information on how to enable account confirmation and password reset please
+                    // visit https://go.microsoft.com/fwlink/?LinkID=532713
+                    var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    var callbackUrl = Url.ResetPasswordCallbackLink(user.Id.ToString(), code, Request.Scheme);
+
+
+                    var ResetPassword = $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>";
+
+                    return RedirectToAction(nameof(ForgotPasswordConfirmation), new { ResetPassword = ResetPassword });
                 }
-
-                // For more information on how to enable account confirmation and password reset please
-                // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                var callbackUrl = Url.ResetPasswordCallbackLink(user.Id.ToString(), code, Request.Scheme);
-
-
-                var ResetPassword = $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>";
-
-                return RedirectToAction(nameof(ForgotPasswordConfirmation), new { ResetPassword = ResetPassword });
+                else
+                {
+                    return RedirectToAction(nameof(AccessDenied), new { errorMsg = "非超级管理员，只能修改自己密码" });
+                }
             }
 
             // If we got this far, something failed, redisplay form
@@ -851,8 +896,9 @@ namespace IdentityServer4.Quickstart.UI
 
         [HttpGet]
         //[Route("account/access-denied")]
-        public IActionResult AccessDenied()
+        public IActionResult AccessDenied(string errorMsg = "")
         {
+            ViewBag.ErrorMsg = errorMsg;
             return View();
         }
 

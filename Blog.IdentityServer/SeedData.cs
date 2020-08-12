@@ -22,10 +22,42 @@ namespace Blog.IdentityServer
 
         public static void EnsureSeedData(IServiceProvider serviceProvider)
         {
-            //1.dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/IdentityServer/PersistedGrantDb
-            //2.dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/IdentityServer/ConfigurationDb
-            //3.dotnet ef migrations add AppDbMigration -c ApplicationDbContext -o Data
-            //4.dotnet run /seed
+            /*
+             * 本项目同时支持Mysql和Sqlserver，我一直使用的是Mysql，所以Mysql的迁移文件已经配置号，在Data文件夹下，
+             * 直接执行update-database xxxx,那三步即可。如果你使用sqlserver，可以先从迁移开始，下边有步骤
+             * 
+             * 当然你也可以都删掉，自己重新做迁移。
+             * 迁移完成后，执行dotnet run /seed
+             *  1、PM> add-migration InitialIdentityServerPersistedGrantDbMigrationMysql -c PersistedGrantDbContext -o Data/MigrationsMySql/IdentityServer/PersistedGrantDb 
+                Build started...
+                Build succeeded.
+                To undo this action, use Remove-Migration.
+                2、PM> update-database -c PersistedGrantDbContext
+                Build started...
+                Build succeeded.
+                Applying migration '20200509165052_InitialIdentityServerPersistedGrantDbMigrationMysql'.
+                Done.
+                3、PM> add-migration InitialIdentityServerConfigurationDbMigrationMysql -c ConfigurationDbContext -o Data/MigrationsMySql/IdentityServer/ConfigurationDb
+                Build started...
+                Build succeeded.
+                To undo this action, use Remove-Migration.
+                4、PM> update-database -c ConfigurationDbContext
+                Build started...
+                Build succeeded.
+                Applying migration '20200509165153_InitialIdentityServerConfigurationDbMigrationMysql'.
+                Done.
+                5、PM> add-migration AppDbMigration -c ApplicationDbContext -o Data/MigrationsMySql
+                Build started...
+                Build succeeded.
+                To undo this action, use Remove-Migration.
+                6、PM> update-database -c ApplicationDbContext
+                Build started...
+                Build succeeded.
+                Applying migration '20200509165505_AppDbMigration'.
+                Done.
+             * 
+             */
+
             Console.WriteLine("Seeding database...");
 
             using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -73,7 +105,7 @@ namespace Blog.IdentityServer
                                     birth = user.birth,
                                     addr = user.addr,
                                     tdIsDelete = user.tdIsDelete,
-                                    Email = user.uLoginName + "@blog.com",
+                                    Email = user.uLoginName + "@email.com",
                                     EmailConfirmed=true,
                                     RealName=user.uRealName,
                                 };
@@ -206,6 +238,20 @@ namespace Blog.IdentityServer
             else
             {
                 Console.WriteLine("ApiResources already populated");
+            }
+
+            if (!context.ApiScopes.Any())
+            {
+                Console.WriteLine("ApiScopes being populated");
+                foreach (var resource in Config.GetApiScopes().ToList())
+                {
+                    context.ApiScopes.Add(resource.ToEntity());
+                }
+                context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("ApiScopes already populated");
             }
         }
     }
